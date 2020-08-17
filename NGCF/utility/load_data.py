@@ -109,7 +109,7 @@ class Data(object):
 
         t2 = time()
 
-        def normalized_adj_single(adj):
+        def mean_adj_single(adj):
             # D^-1 * A
             rowsum = np.array(adj.sum(1))
 
@@ -122,6 +122,18 @@ class Data(object):
             print('generate single-normalized adjacency matrix.')
             return norm_adj.tocoo()
 
+        def normalized_adj_single(adj):
+            # D^-1/2 * A * D^-1/2
+            rowsum = np.array(adj.sum(1))
+
+            d_inv_sqrt = np.power(rowsum, -0.5).flatten()
+            d_inv_sqrt[np.isinf(d_inv_sqrt)] = 0.
+            d_mat_inv_sqrt = sp.diags(d_inv_sqrt)
+
+            # bi_lap = adj.dot(d_mat_inv_sqrt).transpose().dot(d_mat_inv_sqrt)
+            bi_lap = d_mat_inv_sqrt.dot(adj).dot(d_mat_inv_sqrt)
+            return bi_lap.tocoo()
+
         def check_adj_if_equal(adj):
             dense_A = np.array(adj.todense())
             degree = np.sum(dense_A, axis=1, keepdims=False)
@@ -130,8 +142,9 @@ class Data(object):
             print('check normalized adjacency matrix whether equal to this laplacian matrix.')
             return temp
 
-        norm_adj_mat = normalized_adj_single(adj_mat + sp.eye(adj_mat.shape[0]))
-        mean_adj_mat = normalized_adj_single(adj_mat)
+        norm_adj_mat = mean_adj_single(adj_mat + sp.eye(adj_mat.shape[0]))
+        # norm_adj_mat = normalized_adj_single(adj_mat + sp.eye(adj_mat.shape[0]))
+        mean_adj_mat = mean_adj_single(adj_mat)
 
         print('already normalize adjacency matrix', time() - t2)
         return adj_mat.tocsr(), norm_adj_mat.tocsr(), mean_adj_mat.tocsr()
