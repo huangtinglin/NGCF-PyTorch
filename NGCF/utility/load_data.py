@@ -121,7 +121,7 @@ class Data(object):
             # norm_adj = adj.dot(d_mat_inv)
             print('generate single-normalized adjacency matrix.')
             return norm_adj.tocoo()
-        
+
         def check_adj_if_equal(adj):
             dense_A = np.array(adj.todense())
             degree = np.sum(dense_A, axis=1, keepdims=False)
