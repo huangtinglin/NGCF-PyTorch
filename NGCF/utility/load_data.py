@@ -13,7 +13,6 @@ from time import time
 class Data(object):
     def __init__(self, path, batch_size):
         self.path = path
-        # batch_size个user
         self.batch_size = batch_size
 
         train_file = path + '/train.txt'
@@ -150,7 +149,6 @@ class Data(object):
         return adj_mat.tocsr(), norm_adj_mat.tocsr(), mean_adj_mat.tocsr()
 
     def negative_pool(self):
-        # 负抽样 即抽样100个不属于该user的item
         t1 = time()
         for u in self.train_items.keys():
             neg_items = list(set(range(self.n_items)) - set(self.train_items[u]))
@@ -208,7 +206,6 @@ class Data(object):
         print('n_users=%d, n_items=%d' % (self.n_users, self.n_items))
         print('n_interactions=%d' % (self.n_train + self.n_test))
         print('n_train=%d, n_test=%d, sparsity=%.5f' % (self.n_train, self.n_test, (self.n_train + self.n_test)/(self.n_users * self.n_items)))
-
 
     def get_sparsity_split(self):
         try:
