@@ -44,7 +44,7 @@ def parse_args():
     parser.add_argument('--alg_type', nargs='?', default='ngcf',
                         help='Specify the type of the graph convolutional layer from {ngcf, gcn, gcmc}.')
 
-    parser.add_argument('--gpu_id', type=int, default=0,
+    parser.add_argument('--gpu_id', type=int, default=6,
                         help='0 for NAIS_prod, 1 for NAIS_concat')
 
     parser.add_argument('--node_dropout_flag', type=int, default=1,
