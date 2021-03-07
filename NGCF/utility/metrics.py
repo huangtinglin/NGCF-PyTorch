@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.metrics import roc_auc_score
 
+
 def recall(rank, ground_truth, N):
     return len(set(rank[:N]) & set(ground_truth)) / float(len(set(ground_truth)))
 
@@ -58,20 +59,29 @@ def dcg_at_k(r, k, method=1):
     return 0.
 
 
-def ndcg_at_k(r, k, method=1):
+def ndcg_at_k(r, k, ground_truth, method=1):
     """Score is normalized discounted cumulative gain (ndcg)
     Relevance is positive real values.  Can use binary
     as the previous methods.
     Returns:
         Normalized discounted cumulative gain
+
+        Low but correct defination
     """
-    dcg_max = dcg_at_k(sorted(r, reverse=True), k, method)
+    GT = set(ground_truth)
+    if len(GT) > k :
+        sent_list = [1.0] * k
+    else:
+        sent_list = [1.0]*len(GT) + [0.0]*(k-len(GT))
+    dcg_max = dcg_at_k(sent_list, k, method)
     if not dcg_max:
         return 0.
     return dcg_at_k(r, k, method) / dcg_max
 
 
 def recall_at_k(r, k, all_pos_num):
+    # if all_pos_num == 0:
+    #     return 0
     r = np.asfarray(r)[:k]
     return np.sum(r) / all_pos_num
 
@@ -89,7 +99,7 @@ def F1(pre, rec):
     else:
         return 0.
 
-def auc(ground_truth, prediction):
+def AUC(ground_truth, prediction):
     try:
         res = roc_auc_score(y_true=ground_truth, y_score=prediction)
     except Exception:
